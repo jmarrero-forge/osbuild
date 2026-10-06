@@ -70,6 +70,9 @@ FAKE_INPUTS = {
     # composefs
     ({"composefs": False}, []),
     ({"composefs": True}, ["--composefs-backend"]),
+    # initialize-var-mounts
+    ({"initialize-var-mounts": False}, []),
+    ({"initialize-var-mounts": True}, ["--initialize-var-mounts"]),
     # all
     ({"root-ssh-authorized-keys": ["key1", "key2"],
       "kernel-args": ["arg1", "arg2"],

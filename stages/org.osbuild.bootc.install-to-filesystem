@@ -68,6 +68,8 @@ def main(options, inputs, paths):  # pylint: disable=too-many-branches
             pargs.extend(["--bootloader", options["bootloader"]])
         if options.get("composefs", False):
             pargs.extend(["--composefs-backend"])
+        if options.get("initialize-var-mounts", False):
+            pargs.extend(["--initialize-var-mounts"])
 
         # add target and go
         pargs.append(dst)
