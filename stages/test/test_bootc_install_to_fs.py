@@ -6,6 +6,8 @@ from unittest.mock import Mock, call, patch
 
 import pytest
 
+from osbuild import testutil
+
 STAGE_NAME = "org.osbuild.bootc.install-to-filesystem"
 
 
@@ -41,6 +43,29 @@ FAKE_INPUTS = {
 }
 
 
+@pytest.mark.parametrize("options,expected_err", [
+    # good
+    ({}, ""),
+    ({"initialize-var-mounts": True, "defer-var": True}, ""),
+    ({"initialize-var-mounts": False, "defer-var": False}, ""),
+    # bad
+    ({"initialize-var-mounts": "yes"}, "'yes' is not of type 'boolean'"),
+    ({"defer-var": "yes"}, "'yes' is not of type 'boolean'"),
+])
+def test_bootc_install_to_fs_schema_validation(stage_schema, options, expected_err):
+    test_input = {
+        "type": STAGE_NAME,
+        "options": options,
+    }
+    res = stage_schema.validate(test_input)
+
+    if expected_err == "":
+        assert res.valid is True, f"err: {[e.as_dict() for e in res.errors]}"
+    else:
+        assert res.valid is False
+        testutil.assert_jsonschema_error_contains(res, expected_err, expected_num_errs=1)
+
+
 @pytest.mark.parametrize("options,expected_args", [
     ({}, []),
     # root-ssh
@@ -70,6 +95,12 @@ FAKE_INPUTS = {
     # composefs
     ({"composefs": False}, []),
     ({"composefs": True}, ["--composefs-backend"]),
+    # initialize-var-mounts
+    ({"initialize-var-mounts": False}, []),
+    ({"initialize-var-mounts": True}, ["--initialize-var-mounts"]),
+    # defer-var
+    ({"defer-var": False}, []),
+    ({"defer-var": True}, ["--defer-var"]),
     # all
     ({"root-ssh-authorized-keys": ["key1", "key2"],
       "kernel-args": ["arg1", "arg2"],
@@ -78,6 +109,8 @@ FAKE_INPUTS = {
       "root-mount-spec": "root-mount-spec",
       "boot-mount-spec": "boot-mount-spec",
       "bootupd-skip-boot-uuid": True,
+      "initialize-var-mounts": True,
+      "defer-var": True,
       },
      ["--root-ssh-authorized-keys", "/tmp/fake-named-tmpfile-name",
       "--karg", "arg1", "--karg", "arg2",
@@ -86,6 +119,8 @@ FAKE_INPUTS = {
       "--root-mount-spec", "root-mount-spec",
       "--boot-mount-spec", "boot-mount-spec",
       "--bootupd-skip-boot-uuid",
+      "--initialize-var-mounts",
+      "--defer-var",
       ],
      ),
 ])

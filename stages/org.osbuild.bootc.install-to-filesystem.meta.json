@@ -74,6 +74,16 @@
           "description": "Use the compsefs backend instead of the ostree backend",
           "type": "boolean",
           "default": "false"
+        },
+        "initialize-var-mounts": {
+          "description": "Initialize the empty filesystems mounted at or below /var from the image's /var. Requires a bootc that lists `initialize-var-mounts` in the features of `bootc --version`.",
+          "type": "boolean",
+          "default": false
+        },
+        "defer-var": {
+          "description": "Don't seed the deployment's /var from the image. Combined with `initialize-var-mounts`, each file of the image's /var is then stored once, on the filesystem that holds it at boot; on its own, the caller fills /var. Requires a bootc that lists `defer-var` in the features of `bootc --version`.",
+          "type": "boolean",
+          "default": false
         }
       }
     },
