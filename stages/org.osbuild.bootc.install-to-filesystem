@@ -70,6 +70,8 @@ def main(options, inputs, paths):  # pylint: disable=too-many-branches
             pargs.extend(["--composefs-backend"])
         if options.get("initialize-var-mounts", False):
             pargs.extend(["--initialize-var-mounts"])
+        if options.get("defer-var", False):
+            pargs.extend(["--defer-var"])
 
         # add target and go
         pargs.append(dst)
