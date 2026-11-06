@@ -1,3 +1,5 @@
+> [!IMPORTANT]
+> Remove this line to confirm you've reviewed this PR before submitting.
 # OSBuild
 
 Build-Pipelines for Operating System Artifacts
